@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>Windowws关闭端口占用</title>
-    <url>/2019/12/26/Windowws%E5%85%B3%E9%97%AD%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8/</url>
+    <url>/2019/12/26/Windows%E5%85%B3%E9%97%AD%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8/</url>
     <content><![CDATA[<p>查看端口使用情况</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ano</span><br></pre></td></tr></table></figure>
 
