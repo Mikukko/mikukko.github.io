@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>Windows关闭端口占用</title>
-    <url>/2019/12/26/Windows%E5%85%B3%E9%97%AD%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8/</url>
-    <content><![CDATA[<p>查看端口使用情况</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ano</span><br></pre></td></tr></table></figure>
-
-<p>已知被占用端口号, 如1080, 获取到使用该端口的进程ID, 即PID, (假设为12236)</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ano|findstr <span class="string">"1080"</span></span><br></pre></td></tr></table></figure>
-
-<p>使用获取到的PID查找对应应用</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tasklist | findstr <span class="string">"12236"</span></span><br></pre></td></tr></table></figure>
-
-<p>使用获取到的进程PID杀掉应用</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">taskkill /f /t /im <span class="string">"12236"</span></span><br></pre></td></tr></table></figure>
-
-<p>自动关闭占用端口进程bat脚本:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">title Close Port</span><br><span class="line"><span class="built_in">set</span> /p port=Please enter port:</span><br><span class="line"><span class="keyword">if</span> <span class="string">"%port%"</span> == <span class="string">""</span> (</span><br><span class="line">    <span class="built_in">echo</span> Please enter a port <span class="built_in">which</span> is not null</span><br><span class="line">    goto end</span><br><span class="line">)</span><br><span class="line"><span class="keyword">for</span> /f <span class="string">"tokens=1-5"</span> %%a <span class="keyword">in</span> (<span class="string">'netstat -ano ^| find ":%port% "'</span>) <span class="keyword">do</span> (</span><br><span class="line">    <span class="built_in">echo</span> %%a %%b %%c %%d %%e</span><br><span class="line">    @<span class="built_in">echo</span> %%b|findstr /c<span class="string">":%port%"</span> &gt;nul</span><br><span class="line">    <span class="keyword">if</span> %errorlevel% equ 0 (</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"%%e"</span> == <span class="string">""</span> (</span><br><span class="line">            <span class="keyword">if</span> not <span class="string">"%%d"</span> == <span class="string">"0"</span> (</span><br><span class="line">                <span class="built_in">echo</span> port is localhost <span class="built_in">set</span> pid %%d</span><br><span class="line">                <span class="built_in">set</span> pid=%%d</span><br><span class="line">            )</span><br><span class="line">        ) <span class="keyword">else</span> (</span><br><span class="line">            <span class="keyword">if</span> not <span class="string">"%%e"</span> == <span class="string">"0"</span> (</span><br><span class="line">               <span class="built_in">echo</span> port is localhost <span class="built_in">set</span> pid %%d</span><br><span class="line">               <span class="built_in">set</span> pid=%%e</span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">    ) <span class="keyword">else</span> (</span><br><span class="line">        <span class="built_in">echo</span> port not localhost</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> <span class="string">"%pid%"</span>==<span class="string">""</span> (</span><br><span class="line"> <span class="built_in">echo</span> Port not used %port%</span><br><span class="line">) <span class="keyword">else</span> (</span><br><span class="line"> <span class="built_in">echo</span> used port %port% the process %pid%</span><br><span class="line"> taskkill /f /pid %pid%</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">:end</span><br><span class="line">pause</span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
+<search> 
+  
+  
+    
+    <entry>
+      <title>Windows关闭端口占用</title>
+      <link href="/2019/12/26/Windows%E5%85%B3%E9%97%AD%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8/"/>
+      <url>/2019/12/26/Windows%E5%85%B3%E9%97%AD%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8/</url>
+      
+        <content type="html"><![CDATA[<p>查看端口使用情况</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -ano</span><br></pre></td></tr></table></figure><p>已知被占用端口号, 如1080, 获取到使用该端口的进程ID, 即PID, (假设为12236)</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -ano|findstr <span class="string">"1080"</span></span><br></pre></td></tr></table></figure><p>使用获取到的PID查找对应应用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tasklist | findstr <span class="string">"12236"</span></span><br></pre></td></tr></table></figure><p>使用获取到的进程PID杀掉应用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">taskkill /f /t /im <span class="string">"12236"</span></span><br></pre></td></tr></table></figure><p>自动关闭占用端口进程bat脚本:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">title Close Port</span><br><span class="line"><span class="built_in">set</span> /p port=Please enter port:</span><br><span class="line"><span class="keyword">if</span> <span class="string">"%port%"</span> == <span class="string">""</span> (</span><br><span class="line">    <span class="built_in">echo</span> Please enter a port <span class="built_in">which</span> is not null</span><br><span class="line">    goto end</span><br><span class="line">)</span><br><span class="line"><span class="keyword">for</span> /f <span class="string">"tokens=1-5"</span> %%a <span class="keyword">in</span> (<span class="string">'netstat -ano ^| find ":%port% "'</span>) <span class="keyword">do</span> (</span><br><span class="line">    <span class="built_in">echo</span> %%a %%b %%c %%d %%e</span><br><span class="line">    @<span class="built_in">echo</span> %%b|findstr /c<span class="string">":%port%"</span> &gt;nul</span><br><span class="line">    <span class="keyword">if</span> %errorlevel% equ 0 (</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"%%e"</span> == <span class="string">""</span> (</span><br><span class="line">            <span class="keyword">if</span> not <span class="string">"%%d"</span> == <span class="string">"0"</span> (</span><br><span class="line">                <span class="built_in">echo</span> port is localhost <span class="built_in">set</span> pid %%d</span><br><span class="line">                <span class="built_in">set</span> pid=%%d</span><br><span class="line">            )</span><br><span class="line">        ) <span class="keyword">else</span> (</span><br><span class="line">            <span class="keyword">if</span> not <span class="string">"%%e"</span> == <span class="string">"0"</span> (</span><br><span class="line">               <span class="built_in">echo</span> port is localhost <span class="built_in">set</span> pid %%d</span><br><span class="line">               <span class="built_in">set</span> pid=%%e</span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">    ) <span class="keyword">else</span> (</span><br><span class="line">        <span class="built_in">echo</span> port not localhost</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> <span class="string">"%pid%"</span>==<span class="string">""</span> (</span><br><span class="line"> <span class="built_in">echo</span> Port not used %port%</span><br><span class="line">) <span class="keyword">else</span> (</span><br><span class="line"> <span class="built_in">echo</span> used port %port% the process %pid%</span><br><span class="line"> taskkill /f /pid %pid%</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">:end</span><br><span class="line">pause</span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
       <categories>
-        <category>脚本命令</category>
+          
+          <category> 脚本命令 </category>
+          
       </categories>
-      <tags>
-        <tag>bat</tag>
-      </tags>
-  </entry>
+      
+      
+        <tags>
+            
+            <tag> bat </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
 </search>
