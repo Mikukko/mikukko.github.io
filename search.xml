@@ -1,41 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>删除3D对象</title>
-    <url>/2019/12/28/%E5%88%A0%E9%99%A43D%E5%AF%B9%E8%B1%A1/</url>
-    <content><![CDATA[<h4 id="删除Windows资源文件夹中3D对象文件夹"><a href="#删除Windows资源文件夹中3D对象文件夹" class="headerlink" title="删除Windows资源文件夹中3D对象文件夹"></a>删除Windows资源文件夹中<code>3D对象</code>文件夹</h4><p>复制以下内容保存为<code>.bat</code>文件,右键以管理员模式运行即可</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">REG DELETE <span class="string">"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;0DB7E03F-FC29-4DC6-9020-FF41B59E513A&#125;"</span> /f</span><br><span class="line">REG DELETE <span class="string">"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;0DB7E03F-FC29-4DC6-9020-FF41B59E513A&#125;"</span> /f</span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>]]></content>
+<search> 
+  
+  
+    
+    <entry>
+      <title>Hive与HBase区别</title>
+      <link href="/2019/12/29/Hive%E4%B8%8EHBase%E5%8C%BA%E5%88%AB/"/>
+      <url>/2019/12/29/Hive%E4%B8%8EHBase%E5%8C%BA%E5%88%AB/</url>
+      
+        <content type="html"><![CDATA[<h4 id="1-两者分别是什么？"><a href="#1-两者分别是什么？" class="headerlink" title="1. 两者分别是什么？"></a>1. 两者分别是什么？</h4><p>​        <strong>Apache Hive</strong>是一个构建在Hadoop基础设施之上的数据仓库。通过Hive可以使用HQL语言查询存放在HDFS上的数据。HQL是一种类SQL语言，这种语言最终被转化为Map/Reduce. 虽然Hive提供了SQL查询功能，但是Hive不能够进行交互查询–因为它只能够在Haoop上批量的执行Hadoop。    </p><p>​        <strong>Apache HBase</strong>是一种Key/Value系统，它运行在HDFS之上。和Hive不一样，Hbase的能够在它的数据库上实时运行，而不是运行MapReduce任务。Hive被分区为表格，表格又被进一步分割为列簇。列簇必须使用schema定义，列簇将某一类型列集合起来（列不要求schema定义）。例如，“message”列簇可能包含：“to”, ”from” “date”, “subject”, 和”body”. 每一个 key/value对在Hbase中被定义为一个cell，每一个key由row-key，列簇、列和时间戳。在Hbase中，行是key/value映射的集合，这个映射通过row-key来唯一标识。Hbase利用Hadoop的基础设施，可以利用通用的设备进行水平的扩展。</p><h4 id="2-两者的特点"><a href="#2-两者的特点" class="headerlink" title="2. 两者的特点"></a>2. 两者的特点</h4><p>​        Hive帮助熟悉SQL的人运行MapReduce任务。因为它是JDBC兼容的，同时，它也能够和现存的SQL工具整合在一起。运行Hive查询会花费很长时间，因为它会默认遍历表中所有的数据。虽然有这样的缺点，一次遍历的数据量可以通过Hive的分区机制来控制。分区允许在数据集上运行过滤查询，这些数据集存储在不同的文件夹内，查询的时候只遍历指定文件夹（分区）中的数据。这种机制可以用来，例如，只处理在某一个时间范围内的文件，只要这些文件名中包括了时间格式。    </p><p>​        HBase通过存储key/value来工作。它支持四种主要的操作：增加或者更新行，查看一个范围内的cell，获取指定的行，删除指定的行、列或者是列的版本。版本信息用来获取历史数据（每一行的历史数据可以被删除，然后通过Hbase compactions就可以释放出空间）。虽然HBase包括表格，但是schema仅仅被表格和列簇所要求，列不需要schema。Hbase的表格包括增加/计数功能。</p><h4 id="3-限制"><a href="#3-限制" class="headerlink" title="3. 限制"></a>3. 限制</h4><p>​        Hive目前不支持更新操作。另外，由于hive在hadoop上运行批量操作，它需要花费很长的时间，通常是几分钟到几个小时才可以获取到查询的结果。Hive必须提供预先定义好的schema将文件和目录映射到列，并且Hive与ACID不兼容。    </p><p>​        HBase查询是通过特定的语言来编写的，这种语言需要重新学习。类SQL的功能可以通过Apache Phonenix实现，但这是以必须提供schema为代价的。另外，Hbase也并不是兼容所有的ACID特性，虽然它支持某些特性。最后但不是最重要的–为了运行Hbase，Zookeeper是必须的，zookeeper是一个用来进行分布式协调的服务，这些服务包括配置服务，维护元信息和命名空间服务。</p><h4 id="4-应用场景"><a href="#4-应用场景" class="headerlink" title="4.应用场景"></a>4.应用场景</h4><p>​        Hive适合用来对一段时间内的数据进行分析查询，例如，用来计算趋势或者网站的日志。Hive不应该用来进行实时的查询。因为它需要很长时间才可以返回结果。    Hbase非常适合用来进行大数据的实时查询。Facebook用Hbase进行消息和实时的分析。它也可以用来统计Facebook的连接数。</p><h4 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h4><p>​        Hive和Hbase是两种基于Hadoop的不同技术–Hive是一种类SQL的引擎，并且运行MapReduce任务，Hbase是一种在Hadoop之上的NoSQL 的Key/vale数据库。当然，这两种工具是可以同时使用的。就像用Google来搜索，用FaceBook进行社交一样，Hive可以用来进行统计查询，HBase可以用来进行实时查询，数据也可以从Hive写到Hbase，设置再从Hbase写回Hive。</p>]]></content>
+      
+      
       <categories>
-        <category>脚本命令</category>
+          
+          <category> 大数据 </category>
+          
       </categories>
-      <tags>
-        <tag>bat</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Windows关闭端口占用</title>
-    <url>/2019/12/26/Windows%E5%85%B3%E9%97%AD%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8/</url>
-    <content><![CDATA[<p>查看端口使用情况</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ano</span><br></pre></td></tr></table></figure>
-
-<p>已知被占用端口号, 如1080, 获取到使用该端口的进程ID, 即PID, (假设为12236)</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ano|findstr <span class="string">"1080"</span></span><br></pre></td></tr></table></figure>
-
-<p>使用获取到的PID查找对应应用</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tasklist | findstr <span class="string">"12236"</span></span><br></pre></td></tr></table></figure>
-
-<p>使用获取到的进程PID杀掉应用</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">taskkill /f /t /im <span class="string">"12236"</span></span><br></pre></td></tr></table></figure>
-
-<p>自动关闭占用端口进程bat脚本:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">title Close Port</span><br><span class="line"><span class="built_in">set</span> /p port=Please enter port:</span><br><span class="line"><span class="keyword">if</span> <span class="string">"%port%"</span> == <span class="string">""</span> (</span><br><span class="line">    <span class="built_in">echo</span> Please enter a port <span class="built_in">which</span> is not null</span><br><span class="line">    goto end</span><br><span class="line">)</span><br><span class="line"><span class="keyword">for</span> /f <span class="string">"tokens=1-5"</span> %%a <span class="keyword">in</span> (<span class="string">'netstat -ano ^| find ":%port% "'</span>) <span class="keyword">do</span> (</span><br><span class="line">    <span class="built_in">echo</span> %%a %%b %%c %%d %%e</span><br><span class="line">    @<span class="built_in">echo</span> %%b|findstr /c<span class="string">":%port%"</span> &gt;nul</span><br><span class="line">    <span class="keyword">if</span> %errorlevel% equ 0 (</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"%%e"</span> == <span class="string">""</span> (</span><br><span class="line">            <span class="keyword">if</span> not <span class="string">"%%d"</span> == <span class="string">"0"</span> (</span><br><span class="line">                <span class="built_in">echo</span> port is localhost <span class="built_in">set</span> pid %%d</span><br><span class="line">                <span class="built_in">set</span> pid=%%d</span><br><span class="line">            )</span><br><span class="line">        ) <span class="keyword">else</span> (</span><br><span class="line">            <span class="keyword">if</span> not <span class="string">"%%e"</span> == <span class="string">"0"</span> (</span><br><span class="line">               <span class="built_in">echo</span> port is localhost <span class="built_in">set</span> pid %%d</span><br><span class="line">               <span class="built_in">set</span> pid=%%e</span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">    ) <span class="keyword">else</span> (</span><br><span class="line">        <span class="built_in">echo</span> port not localhost</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> <span class="string">"%pid%"</span>==<span class="string">""</span> (</span><br><span class="line"> <span class="built_in">echo</span> Port not used %port%</span><br><span class="line">) <span class="keyword">else</span> (</span><br><span class="line"> <span class="built_in">echo</span> used port %port% the process %pid%</span><br><span class="line"> taskkill /f /pid %pid%</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">:end</span><br><span class="line">pause</span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
+      
+      
+        <tags>
+            
+            <tag> Hadoop </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>删除3D对象</title>
+      <link href="/2019/12/28/%E5%88%A0%E9%99%A43D%E5%AF%B9%E8%B1%A1/"/>
+      <url>/2019/12/28/%E5%88%A0%E9%99%A43D%E5%AF%B9%E8%B1%A1/</url>
+      
+        <content type="html"><![CDATA[<h4 id="删除Windows资源文件夹中3D对象文件夹"><a href="#删除Windows资源文件夹中3D对象文件夹" class="headerlink" title="删除Windows资源文件夹中3D对象文件夹"></a>删除Windows资源文件夹中<code>3D对象</code>文件夹</h4><p>复制以下内容保存为<code>.bat</code>文件,右键以管理员模式运行即可</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">REG DELETE <span class="string">"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;0DB7E03F-FC29-4DC6-9020-FF41B59E513A&#125;"</span> /f</span><br><span class="line">REG DELETE <span class="string">"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;0DB7E03F-FC29-4DC6-9020-FF41B59E513A&#125;"</span> /f</span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
       <categories>
-        <category>脚本命令</category>
+          
+          <category> 脚本命令 </category>
+          
       </categories>
-      <tags>
-        <tag>bat</tag>
-      </tags>
-  </entry>
+      
+      
+        <tags>
+            
+            <tag> bat </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Windows关闭端口占用</title>
+      <link href="/2019/12/26/Windows%E5%85%B3%E9%97%AD%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8/"/>
+      <url>/2019/12/26/Windows%E5%85%B3%E9%97%AD%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8/</url>
+      
+        <content type="html"><![CDATA[<p>查看端口使用情况</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -ano</span><br></pre></td></tr></table></figure><p>已知被占用端口号, 如1080, 获取到使用该端口的进程ID, 即PID, (假设为12236)</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -ano|findstr <span class="string">"1080"</span></span><br></pre></td></tr></table></figure><p>使用获取到的PID查找对应应用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tasklist | findstr <span class="string">"12236"</span></span><br></pre></td></tr></table></figure><p>使用获取到的进程PID杀掉应用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">taskkill /f /t /im <span class="string">"12236"</span></span><br></pre></td></tr></table></figure><p>自动关闭占用端口进程bat脚本:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">title Close Port</span><br><span class="line"><span class="built_in">set</span> /p port=Please enter port:</span><br><span class="line"><span class="keyword">if</span> <span class="string">"%port%"</span> == <span class="string">""</span> (</span><br><span class="line">    <span class="built_in">echo</span> Please enter a port <span class="built_in">which</span> is not null</span><br><span class="line">    goto end</span><br><span class="line">)</span><br><span class="line"><span class="keyword">for</span> /f <span class="string">"tokens=1-5"</span> %%a <span class="keyword">in</span> (<span class="string">'netstat -ano ^| find ":%port% "'</span>) <span class="keyword">do</span> (</span><br><span class="line">    <span class="built_in">echo</span> %%a %%b %%c %%d %%e</span><br><span class="line">    @<span class="built_in">echo</span> %%b|findstr /c<span class="string">":%port%"</span> &gt;nul</span><br><span class="line">    <span class="keyword">if</span> %errorlevel% equ 0 (</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"%%e"</span> == <span class="string">""</span> (</span><br><span class="line">            <span class="keyword">if</span> not <span class="string">"%%d"</span> == <span class="string">"0"</span> (</span><br><span class="line">                <span class="built_in">echo</span> port is localhost <span class="built_in">set</span> pid %%d</span><br><span class="line">                <span class="built_in">set</span> pid=%%d</span><br><span class="line">            )</span><br><span class="line">        ) <span class="keyword">else</span> (</span><br><span class="line">            <span class="keyword">if</span> not <span class="string">"%%e"</span> == <span class="string">"0"</span> (</span><br><span class="line">               <span class="built_in">echo</span> port is localhost <span class="built_in">set</span> pid %%d</span><br><span class="line">               <span class="built_in">set</span> pid=%%e</span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">    ) <span class="keyword">else</span> (</span><br><span class="line">        <span class="built_in">echo</span> port not localhost</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> <span class="string">"%pid%"</span>==<span class="string">""</span> (</span><br><span class="line"> <span class="built_in">echo</span> Port not used %port%</span><br><span class="line">) <span class="keyword">else</span> (</span><br><span class="line"> <span class="built_in">echo</span> used port %port% the process %pid%</span><br><span class="line"> taskkill /f /pid %pid%</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">:end</span><br><span class="line">pause</span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 脚本命令 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> bat </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
 </search>
