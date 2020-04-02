@@ -202,6 +202,230 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://mikukko.github.io/2020/03/14/Docker%E4%B8%8BRedis%E7%9A%84%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar/4997846_p0.jpg">
+      <meta itemprop="name" content="Mikukko">
+      <meta itemprop="description" content="有人独倚晚妆楼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Mikukko">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/14/Docker%E4%B8%8BRedis%E7%9A%84%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Docker下Redis的配置及使用</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-14 20:42:25" itemprop="dateCreated datePublished" datetime="2020-03-14T20:42:25+08:00">2020-03-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-02 18:06:24" itemprop="dateModified" datetime="2020-04-02T18:06:24+08:00">2020-04-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="Docker下Redis的配置及使用"><a href="#Docker下Redis的配置及使用" class="headerlink" title="Docker下Redis的配置及使用"></a>Docker下Redis的配置及使用</h3><h4 id="Docker安装"><a href="#Docker安装" class="headerlink" title="Docker安装"></a>Docker安装</h4><ol>
+<li><p>通过 <strong><em>uname -r</em></strong> 命令查看当前系统内核版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>确保yum包更新至最新</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>*卸载旧版本(如果安装过)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum remove docker  docker-common docker-selinux docker-engine</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装需要的软件包，yum-util 提供yum-config-manager功能，另外两个是devicemapper驱动依赖的</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y yum-utils device-mapper-persistent-data lvm2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置yum源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装最新版本的 docker社区版（Docker CE）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动docker</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start docker</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过运行 hello-world 镜像验证是否正确安装了Docker CE </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run hello-world</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h4 id="Redis的配置"><a href="#Redis的配置" class="headerlink" title="Redis的配置"></a>Redis的配置</h4><ol>
+<li><p>拉取redis镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull redis:lastest</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在本地创建配置及数据目录, 方便管理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /home/redis/conf</span><br><span class="line">mkdir -p /home/redis/data</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑redis配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /home/redis/conf/redis.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Redis配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Redis默认不是以守护进程的方式运行，可以通过该配置项修改，使用yes启用守护进程</span></span><br><span class="line"><span class="attr">daemonize</span> <span class="string">no</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定Redis监听端口，默认端口为6379</span></span><br><span class="line"><span class="attr">port</span> <span class="string">6379</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 绑定的主机地址，不要绑定容器的本地127.0.0.1地址，因为这样就无法在容器外部访问</span></span><br><span class="line"><span class="attr">bind</span> <span class="string">0.0.0.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 持久化</span></span><br><span class="line"><span class="attr">appendonly</span> <span class="string">yes</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑启动脚本redis.bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi redis.bash</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line"> -p 6379:6379 \</span><br><span class="line"> --name redis \</span><br><span class="line"> -v /home/redis/conf/redis.conf:/etc/redis/redis.conf \</span><br><span class="line"> -v /home/redis/data:/data \</span><br><span class="line"> -d \</span><br><span class="line"> redis redis-server /etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
+
+<p>命令说明: </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line"> -p 6379:6379 \ <span class="comment"># 映射本地6379端口到容器6379端口，前为本地端口</span></span><br><span class="line"> --name redis \ <span class="comment"># 设置容器名称为redis，方便以后使用docker ps进行管理</span></span><br><span class="line"> -v /home/redis/conf/redis.conf:/etc/redis/redis.conf \ </span><br><span class="line"> <span class="comment"># 关联本地/home/redis/conf/redis.conf文件到容器中/etc/redis/redis.conf</span></span><br><span class="line"> -v /home/redis/data:/data \</span><br><span class="line"> <span class="comment"># 关联本地/docker/redis/data到容器内/data目录</span></span><br><span class="line"> -d \ <span class="comment"># 后台启动，使用此方式启动，则redis.conf中daemonize必须设置为no，否则会无法启动</span></span><br><span class="line"> redis redis-server /etc/redis/redis.conf </span><br><span class="line"> <span class="comment"># 在容器内启动redis-server的命令，主要是为了加载配置</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改执行权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 redis.bash</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">./redis.bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如需访问容器，可使用</span></span><br><span class="line">docker <span class="built_in">exec</span> -it redis bash</span><br><span class="line"><span class="comment"># 或直接使用redis-cli访问容器内redis</span></span><br><span class="line">docker <span class="built_in">exec</span> -it redis redis-cli</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://mikukko.github.io/2020/02/06/SpringBoot%E8%87%AA%E5%AE%9A%E4%B9%89RedisCacheManager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar/4997846_p0.jpg">
+      <meta itemprop="name" content="Mikukko">
+      <meta itemprop="description" content="有人独倚晚妆楼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Mikukko">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/06/SpringBoot%E8%87%AA%E5%AE%9A%E4%B9%89RedisCacheManager/" class="post-title-link" itemprop="url">SpringBoot 2.x自定义RedisCacheManager</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-06 18:02:08" itemprop="dateCreated datePublished" datetime="2020-02-06T18:02:08+08:00">2020-02-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-02 18:01:45" itemprop="dateModified" datetime="2020-04-02T18:01:45+08:00">2020-04-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="SpringBoot-2-x自定义RedisCacheManager"><a href="#SpringBoot-2-x自定义RedisCacheManager" class="headerlink" title="SpringBoot 2.x自定义RedisCacheManager"></a>SpringBoot 2.x自定义RedisCacheManager</h3><h4 id="SpringBoot-2-0版本中创建RedisCacheManager的方式"><a href="#SpringBoot-2-0版本中创建RedisCacheManager的方式" class="headerlink" title="SpringBoot 2.0版本中创建RedisCacheManager的方式"></a>SpringBoot 2.0版本中创建RedisCacheManager的方式</h4><p>SpringBoot2.0以后, 创建RedisCacheManager的方式有:</p>
+<ol>
+<li><p>通过<strong>RedisCacheManager.builder(redisConncetionFactory)</strong></p>
+<p><strong>.cacheDefaults(redisCacheConfiguration).build()</strong>的方式</p>
+</li>
+<li><p>通过<strong>new RedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration)</strong>的方式创建RedisCacheManager </p>
+</li>
+</ol>
+<p>RedisConncetionFactory为方法中传入的参数, 而RedisCacheConfiguration则需要单独进行配置:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//配置RedisCacheConfiguration</span></span><br><span class="line">RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration</span><br><span class="line">				.defaultCacheConfig() <span class="comment">//使用默认配置创建对象</span></span><br><span class="line">                .disableCachingNullValues()  <span class="comment">//禁止缓存空值</span></span><br><span class="line">                .entryTtl(Duration.ofDays(<span class="number">1</span>)) <span class="comment">//设置缓存过期时间 1天</span></span><br><span class="line">                .serializeValuesWith(RedisSerializationContext</span><br><span class="line">                        .SerializationPair</span><br><span class="line">                        <span class="comment">//设置Value的序列化机制为Json</span></span><br><span class="line">                        .fromSerializer(RedisSerializer.json()));</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>RedisCacheConfiguration</strong>类中的源码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> RedisCacheManager <span class="title">cacheManager</span><span class="params">(RedisConnectionFactory redisConnectionFactory,</span></span></span><br><span class="line"><span class="function"><span class="params">			ResourceLoader resourceLoader)</span> </span>&#123;</span><br><span class="line">		RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisConnectionFactory)</span><br><span class="line">				.cacheDefaults(determineConfiguration(resourceLoader.getClassLoader()));</span><br><span class="line">		List&lt;String&gt; cacheNames = <span class="keyword">this</span>.cacheProperties.getCacheNames();</span><br><span class="line">		<span class="keyword">if</span> (!cacheNames.isEmpty()) &#123;</span><br><span class="line">			builder.initialCacheNames(<span class="keyword">new</span> LinkedHashSet&lt;&gt;(cacheNames));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.customizerInvoker.customize(builder.build());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自定义配置RedisCacheManager:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedisCacheManager <span class="title">cacheManager</span><span class="params">(RedisConnectionFactory redisConnectionFactory)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//设置cache组件</span></span><br><span class="line">        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig() <span class="comment">//开启配置</span></span><br><span class="line">                .disableCachingNullValues()  <span class="comment">//禁止缓存空值</span></span><br><span class="line">                .entryTtl(Duration.ofDays(<span class="number">1</span>)) <span class="comment">//设置缓存过期时间 1天</span></span><br><span class="line">                .serializeValuesWith(RedisSerializationContext</span><br><span class="line">                        .SerializationPair</span><br><span class="line">                        <span class="comment">//设置Value的序列化机制为Json</span></span><br><span class="line">                        .fromSerializer(<span class="keyword">new</span> Jackson2JsonRedisSerializer&lt;&gt;(Object<span class="class">.<span class="keyword">class</span>)))</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(redisCacheConfiguration).build();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://mikukko.github.io/2020/01/12/Shiro%E8%87%AA%E5%AE%9A%E4%B9%89Realm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -609,7 +833,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -622,7 +846,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
